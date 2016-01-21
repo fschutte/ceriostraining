@@ -1,76 +1,71 @@
 package nl.cerios.cinema.web;
 
-import static java.util.stream.Collectors.joining;
+import nl.cerios.cinema.domain.FilmAgendaItem;
+import nl.cerios.cinema.service.FilmAgendaService;
 
 import javax.ejb.EJB;
-
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
-import java.util.List;
-import java.util.Optional;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import nl.cerios.cinema.domain.FilmAgendaItem;
-import nl.cerios.cinema.service.FilmAgendaService;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Servlet implementation class CinemaServlet
  */
 @WebServlet("/CinemaServlet")
 public class CinemaServlet extends HttpServlet {
-	private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG);
 
-	private static final long serialVersionUID = 1L;
+  private static final String DATE_FORMAT = "dd-MM-yyyy";
+  private static final long serialVersionUID = 1L;
 
-	@EJB
-	private FilmAgendaService service;
-	
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		List<FilmAgendaItem> items = service.getFilmAgendaItems();
-		
-		String thead = "<thead><th>Filmtitel</th><th>Speelt op:</th></thead>";
-		String tbody = items.stream()
-			.map(s -> "<tr><td>"+s.getTitel()+"</td><td>"+format(s.getDatum())+"</td></tr>")
-			.collect(joining("", "<tbody>", "</tbody>"));
+  @EJB
+  private FilmAgendaService service;
 
-		
-		String html = 
-				"<!DOCTYPE html><html><head><title>Filmagenda</title></head>"+
-				"<body><h1>Filmagenda</h1>"+
-				"<table>"+thead+tbody+"</table>"+
-				"</body></html>";
-		
-	    response.setContentType("text/html;charset=UTF-8");
-	    response.getWriter().write(html);
-	    	
-	}
+  /**
+   * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+   */
+  @Override
+  protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-	private String format(LocalDate datum) {
-		return Optional.ofNullable(datum)
-				.map(d -> d.format(DATE_FORMAT))
-				.orElse("onbekend");
-		
-		// dit is hetzelfde als:
-		//  if (datum!=null) return datum.format(...)
-		//  else {return "onbekend";}
-	}
+    List<FilmAgendaItem> items = service.getFilmAgendaItems();
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-	}
+    StringBuilder html = new StringBuilder("<!DOCTYPE html>")
+        .append("<html>")
+        .append("<head><title>Filmagenda</title></head>")
+        .append("<body><h1>Filmagenda</h1>")
+        .append("<table>")
+        .append("<thead><th>Filmtitel</th><th>speelt op:</th></thead>")
+        .append("<tbody>");
+    for (FilmAgendaItem item : items) {
+      html.append("<tr><td>")
+          .append(item.getTitel())
+          .append("</td><td>")
+          .append(format(item.getDatum()))
+          .append("</td></tr>");
+    }
+    html.append("</tbody>")
+        .append("</table>")
+        .append("</body>")
+        .append("</html>");
 
+    response.setContentType("text/html;charset=UTF-8");
+    response.getWriter().write(html.toString());
+  }
+
+  private String format(Date datum) {
+    return datum != null ? new SimpleDateFormat(DATE_FORMAT).format(datum) : "onbekend";
+  }
+
+  /**
+   * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+   */
+  @Override
+  protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    // TODO Auto-generated method stub
+  }
 }

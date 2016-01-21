@@ -2,29 +2,11 @@ package nl.cerios.cinema.service;
 
 public class FilmAgendaServiceException extends RuntimeException {
 
-	public FilmAgendaServiceException() {
-		// TODO Auto-generated constructor stub
-	}
+  public FilmAgendaServiceException(String message) {
+    super(message);
+  }
 
-	public FilmAgendaServiceException(String message) {
-		super(message);
-		// TODO Auto-generated constructor stub
-	}
-
-	public FilmAgendaServiceException(Throwable cause) {
-		super(cause);
-		// TODO Auto-generated constructor stub
-	}
-
-	public FilmAgendaServiceException(String message, Throwable cause) {
-		super(message, cause);
-		// TODO Auto-generated constructor stub
-	}
-
-	public FilmAgendaServiceException(String message, Throwable cause,
-			boolean enableSuppression, boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-		// TODO Auto-generated constructor stub
-	}
-
+  public FilmAgendaServiceException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }
