@@ -1,0 +1,8 @@
+<glassfish-web-app>
+  <context-root>/</context-root>
+
+  <resource-ref>
+    <res-ref-name>jdbc/cinema-web</res-ref-name>
+    <jndi-name>jdbc/cinema-web</jndi-name>
+  </resource-ref>
+</glassfish-web-app>
