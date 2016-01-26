@@ -1,0 +1,36 @@
+<!-- FS:  dit is een configuratie die bij mij goed werkt;
+  Ik gebruik hier een h2 database, maar dat kan dus van alles zijn als je maar een jdbc driver (jar) hebt. 
+  Zie IBM Knowledge Center voor andere voorbeelden:
+  https://www-01.ibm.com/support/knowledgecenter/was_beta_liberty/com.ibm.websphere.wlp.nd.multiplatform.doc/ae/twlp_dep_configuring_ds.html
+  
+  -->
+  
+
+<server description="new server">
+
+    <!-- Enable features -->
+    <featureManager>
+        <feature>jsp-2.2</feature>
+        <feature>localConnector-1.0</feature>
+        <feature>servlet-3.1</feature>
+        <feature>jdbc-4.1</feature>
+		<feature>ejbLite-3.1</feature>
+    </featureManager>
+
+    <!-- To access this server from a remote client add a host attribute to the following element, e.g. host="*" -->
+    <httpEndpoint httpPort="9080" httpsPort="9443" id="defaultHttpEndpoint"/>
+
+
+    <applicationMonitor updateTrigger="mbean"/>
+    
+    <!-- Hij gaat er hierbij vanuit dat de h2-1.4.185.jar file in de <liberty_home>/usr/shared/resources/h2 staat -->
+    <library id="H2-lib">
+    	<fileset dir="${shared.resource.dir}/h2" includes="h2-1.4.185.jar"/>
+	</library>
+
+    <dataSource id="h2" jndiName="jdbc/cinema-web" type="javax.sql.ConnectionPoolDataSource">
+    <jdbcDriver javax.sql.ConnectionPoolDataSource="org.h2.jdbcx.JdbcDataSource" javax.sql.DataSource="org.h2.jdbcx.JdbcDataSource" javax.sql.XADataSource="org.h2.jdbcx.JdbcDataSource" libraryRef="H2-lib"/>
+        <properties URL="jdbc:h2:tcp://localhost/~/cerioscinema" password="" user="sa"/>
+    </dataSource>
+
+</server>
